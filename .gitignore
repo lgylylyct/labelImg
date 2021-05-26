@@ -8,8 +8,10 @@ labelImg.egg-info*
 *.pyc
 .*.swp
 
+# pyinstaller genetate
 build/
 dist/
+.spec
 
 tags
 cscope*
