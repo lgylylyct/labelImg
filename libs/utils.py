@@ -2,7 +2,8 @@ from math import sqrt
 from libs.ustr import ustr
 import hashlib
 import re
-import sys
+import sys, os
+import json
 
 try:
     from PyQt5.QtGui import *
@@ -14,7 +15,7 @@ except ImportError:
 
 
 def new_icon(icon):
-    return QIcon(':/' + icon)
+    return QIcon(":/" + icon)
 
 
 def new_button(text, icon=None, slot=None):
@@ -26,8 +27,7 @@ def new_button(text, icon=None, slot=None):
     return b
 
 
-def new_action(parent, text, slot=None, shortcut=None, icon=None,
-               tip=None, checkable=False, enabled=True):
+def new_action(parent, text, slot=None, shortcut=None, icon=None, tip=None, checkable=False, enabled=True):
     """Create a new action and assign callbacks, shortcuts, etc."""
     a = QAction(text, parent)
     if icon is not None:
@@ -59,11 +59,10 @@ def add_actions(widget, actions):
 
 
 def label_validator():
-    return QRegExpValidator(QRegExp(r'^[^ \t].+'), None)
+    return QRegExpValidator(QRegExp(r"^[^ \t].+"), None)
 
 
 class Struct(object):
-
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
@@ -73,31 +72,48 @@ def distance(p):
 
 
 def format_shortcut(text):
-    mod, key = text.split('+', 1)
-    return '<b>%s</b>+<b>%s</b>' % (mod, key)
+    mod, key = text.split("+", 1)
+    return "<b>%s</b>+<b>%s</b>" % (mod, key)
 
 
-def generate_color_by_text(text):
-    s = ustr(text)
-    hash_code = int(hashlib.sha256(s.encode('utf-8')).hexdigest(), 16)
-    r = int((hash_code / 255) % 255)
-    g = int((hash_code / 65025) % 255)
-    b = int((hash_code / 16581375) % 255)
-    return QColor(r, g, b, 100)
+def get_custom_setting():
+    custom_setting_file = os.path.join("data", "custom_setting.json")
+    assert os.path.exists(custom_setting_file), "there is not custom_setting file in {}".format(custom_setting_file)
+    with open(custom_setting_file, "r") as jf:
+        custom_setting = json.load(jf)
+    return custom_setting
+
+
+def generate_color_by_text(text, custom_setting):
+    custom_setting = get_custom_setting()
+    if text in custom_setting["colors"]:
+        return QColor(*custom_setting["colors"][text])
+    else:
+        s = ustr(text)
+        hash_code = int(hashlib.sha256(s.encode("utf-8")).hexdigest(), 16)
+        r = int((hash_code / 255) % 255)
+        g = int((hash_code / 65025) % 255)
+        b = int((hash_code / 16581375) % 255)
+        return QColor(r, g, b, 100)
+
 
 def have_qstring():
     """p3/qt5 get rid of QString wrapper as py3 has native unicode str type"""
-    return not (sys.version_info.major >= 3 or QT_VERSION_STR.startswith('5.'))
+    return not (sys.version_info.major >= 3 or QT_VERSION_STR.startswith("5."))
+
 
 def util_qt_strlistclass():
     return QStringList if have_qstring() else list
 
-def natural_sort(list, key=lambda s:s):
+
+def natural_sort(list, key=lambda s: s):
     """
     Sort the list into natural alphanumeric order.
     """
+
     def get_alphanum_key_func(key):
         convert = lambda text: int(text) if text.isdigit() else text
-        return lambda s: [convert(c) for c in re.split('([0-9]+)', key(s))]
+        return lambda s: [convert(c) for c in re.split("([0-9]+)", key(s))]
+
     sort_key = get_alphanum_key_func(key)
     list.sort(key=sort_key)

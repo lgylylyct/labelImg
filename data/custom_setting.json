@@ -1,0 +1,24 @@
+{
+    "line_width": 3.6,
+    "fill_alpha": 10,
+    "colors": {
+        "DenseDeposit": [
+            255,
+            0,
+            0,
+            150
+        ],
+        "WormyAppearance": [
+            255,
+            0,
+            255,
+            150
+        ],
+        "GFB": [
+            255,
+            255,
+            0,
+            150
+        ]
+    }
+}

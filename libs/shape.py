@@ -9,7 +9,7 @@ except ImportError:
     from PyQt4.QtGui import *
     from PyQt4.QtCore import *
 
-from libs.utils import distance
+from libs.utils import distance, get_custom_setting
 import sys
 
 DEFAULT_LINE_COLOR = QColor(0, 255, 0, 128)
@@ -89,7 +89,8 @@ class Shape(object):
             color = self.select_line_color if self.selected else self.line_color
             pen = QPen(color)
             # Try using integer sizes for smoother drawing(?)
-            pen.setWidth(max(1, int(round(2.0 / self.scale))))
+            width = get_custom_setting()["line_width"]
+            pen.setWidth(max(2, int(round(width / self.scale))))
             painter.setPen(pen)
 
             line_path = QPainterPath()
@@ -101,9 +102,10 @@ class Shape(object):
             # may be desirable.
             # self.drawVertex(vertex_path, 0)
 
-            for i, p in enumerate(self.points):
-                line_path.lineTo(p)
-                self.draw_vertex(vertex_path, i)
+            if len(self.points) > 2:
+                for i, p in enumerate(self.points):
+                    line_path.lineTo(p)
+                    self.draw_vertex(vertex_path, i)
             if self.is_closed():
                 line_path.lineTo(self.points[0])
 
@@ -132,7 +134,11 @@ class Shape(object):
 
             if self.fill:
                 color = self.select_fill_color if self.selected else self.fill_color
-                painter.fillPath(line_path, color)
+                custom_setting = get_custom_setting()
+                alpha = custom_setting["fill_alpha"]
+                fill_color = QColor(color)
+                fill_color.setAlpha(alpha)
+                painter.fillPath(line_path, fill_color)
 
     def draw_vertex(self, path, i):
         d = self.point_size / self.scale
