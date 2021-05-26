@@ -45,7 +45,7 @@ class Canvas(QWidget):
         self.prev_point = QPointF()
         self.offsets = QPointF(), QPointF()
         self.scale = 1.0
-        self.label_font_size = 8
+        self.label_font_size = 4
         self.pixmap = QPixmap()
         self.visible = {}
         self._hide_background = False
