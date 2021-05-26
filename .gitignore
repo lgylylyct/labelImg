@@ -11,7 +11,7 @@ labelImg.egg-info*
 # pyinstaller genetate
 build/
 dist/
-.spec
+*.spec
 
 tags
 cscope*
