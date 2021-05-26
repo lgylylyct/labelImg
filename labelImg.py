@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# build exe cmd:  pyinstaller --onefile labelImg.py
 import argparse
 import codecs
 import distutils.spawn

@@ -514,7 +514,7 @@ class Canvas(QWidget):
         self.setAutoFillBackground(True)
         if self.verified:
             pal = self.palette()
-            pal.setColor(self.backgroundRole(), QColor(184, 239, 38, 128))
+            pal.setColor(self.backgroundRole(), QColor(232, 232, 232, 255))
             self.setPalette(pal)
         else:
             pal = self.palette()
