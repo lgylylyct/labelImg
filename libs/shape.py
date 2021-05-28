@@ -84,7 +84,7 @@ class Shape(object):
     def set_open(self):
         self._closed = False
 
-    def paint(self, painter):
+    def paint(self, painter: QPainter):
         if self.points:
             color = self.select_line_color if self.selected else self.line_color
             pen = QPen(color)
@@ -117,20 +117,33 @@ class Shape(object):
             if self.paint_label:
                 min_x = sys.maxsize
                 min_y = sys.maxsize
+                max_x = 0
+                max_y = 0
                 min_y_label = int(1.25 * self.label_font_size)
                 for point in self.points:
                     min_x = min(min_x, point.x())
                     min_y = min(min_y, point.y())
+                    max_x = max(max_x, point.x())
+                    max_y = max(max_y, point.y())
+
                 if min_x != sys.maxsize and min_y != sys.maxsize:
-                    font = QFont()
-                    font.setPointSize(self.label_font_size)
-                    font.setBold(True)
-                    painter.setFont(font)
+                    text_size = min(40, self.label_font_size / self.scale)
+                    text_size = max(text_size, 18)
+                    # fill the backgroud of text
+                    rect_w = min((max_x - min_x) / 2, text_size * 0.52 * len(self.label))
+                    rect_h = text_size
+                    painter.fillRect(min_x, min_y - text_size, rect_w, rect_h, color)
+
                     if self.label is None:
                         self.label = ""
                     if min_y < min_y_label:
                         min_y += min_y_label
-                    painter.drawText(min_x, min_y, self.label)
+                    font = QFont()
+                    font.setPixelSize(text_size)
+                    painter.setFont(font)
+                    pen = QPen(self.line_color if self.selected else Qt.white)
+                    painter.setPen(pen)
+                    painter.drawText(min_x, min_y - text_size, rect_w, rect_h, 0, self.label)
 
             if self.fill:
                 color = self.select_fill_color if self.selected else self.fill_color
