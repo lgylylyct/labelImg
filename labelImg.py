@@ -866,7 +866,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.actions.shapeLineColor.setEnabled(selected)
         self.actions.shapeFillColor.setEnabled(selected)
 
-    def add_label(self, shape):
+    def add_label(self, shape, index=None):
         shape.paint_label = self.display_label_option.isChecked()
         item = HashableQListWidgetItem(shape.label)
         item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
@@ -874,7 +874,12 @@ class MainWindow(QMainWindow, WindowMixin):
         item.setBackground(generate_color_by_text(shape.label, self.custom_setting))
         self.items_to_shapes[item] = shape
         self.shapes_to_items[shape] = item
-        self.label_list.addItem(item)
+
+        if index is not None:
+            self.label_list.insertItem(index, item)
+        else:
+            self.label_list.addItem(item)
+
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
         self.update_combo_box()
@@ -890,6 +895,14 @@ class MainWindow(QMainWindow, WindowMixin):
         self.update_combo_box()
 
     def load_labels(self, shapes):
+        # arrange according to label_hist
+        shape_arrange = []
+        for l in self.label_hist:
+            for i, (label, points, line_color, fill_color, difficult) in enumerate(shapes):
+                if label == l:
+                    shape_arrange.append(shapes[i])
+        shapes = shape_arrange
+
         s = []
         for label, points, line_color, fill_color, difficult in shapes:
             shape = Shape(label=label)
@@ -1068,8 +1081,8 @@ class MainWindow(QMainWindow, WindowMixin):
         if text is not None:
             self.prev_label_text = text
             generate_color = generate_color_by_text(text, self.custom_setting)
-            shape = self.canvas.set_last_label(text, generate_color, generate_color)
-            self.add_label(shape)
+            shape, index = self.canvas.set_last_label(text, generate_color, generate_color)
+            self.add_label(shape, index)
             if self.beginner():  # Switch to edit mode.
                 self.canvas.set_editing(True)
                 self.actions.create.setEnabled(True)

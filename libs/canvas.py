@@ -657,7 +657,39 @@ class Canvas(QWidget):
             fill_color.setAlpha(alpha)
             self.shapes[-1].fill_color = fill_color
 
-        return self.shapes[-1]
+        insert_index = None
+        shape_arrange = []
+        last_shape = None
+        label_hist = self.parent().window().label_hist
+        for l in label_hist:
+            for i, s in enumerate(self.shapes):
+                if l == s.label:
+                    shape_arrange.append(s)
+                    if i == len(self.shapes) - 1:
+                        insert_index = len(shape_arrange) - 1
+                        last_shape = s
+        self.shape = shape_arrange
+        assert last_shape is not None
+        return last_shape, insert_index
+
+        # label_text_list = [s.label for s in reversed(self.shapes)][1:]
+        # if text in label_text_list:
+        #     insert_index = label_text_list.index(text)
+        #     insert_index = len(label_text_list) - insert_index
+        #     self.shapes.insert(insert_index, self.shapes.pop())
+        #     return self.shapes[insert_index], insert_index
+        # else:
+        #     label_hist = self.parent().window().label_hist
+        #     for i,l in enumerate(label_hist):
+        #         if l in label_text_list:
+
+        #     if text in self.parent().window().label_hist:
+        #         insert_index = self.parent().window().label_hist.index(text)
+        #         if insert_index <= len(self.shapes):
+        #             self.shapes.insert(insert_index, self.shapes.pop())
+        #             return self.shapes[insert_index], insert_index
+
+        # return self.shapes[-1], None
 
     def undo_last_line(self):
         assert self.shapes
