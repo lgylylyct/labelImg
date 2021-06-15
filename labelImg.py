@@ -269,7 +269,7 @@ class MainWindow(QMainWindow, WindowMixin):
         color1 = action(get_str("boxLineColor"), self.choose_color1, "Ctrl+L", "color_line", get_str("boxLineColorDetail"))
 
         create_mode = action(get_str("crtBox"), self.set_create_mode, "w", "new", get_str("crtBoxDetail"), enabled=False)
-        edit_mode = action("&Edit\nRectBox", self.set_edit_mode, "Ctrl+J", "edit", u"Move and edit Boxs", enabled=False)
+        edit_mode = action("&Edit\nRectBox", self.set_edit_mode, "r", "edit", u"Move and edit Boxs", enabled=False)
 
         create = action(get_str("crtBox"), self.create_shape, "w", "new", get_str("crtBoxDetail"), enabled=False)
         delete = action(get_str("delBox"), self.delete_selected_shape, "Delete", "delete", get_str("delBoxDetail"), enabled=False)
